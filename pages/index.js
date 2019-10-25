@@ -1,8 +1,9 @@
 import React from 'react'
+import { observer } from 'mobx-react';
 import Nav from '../components/Nav'
 import "../scss/styles.scss"
 
-const Home = () => (
+const Home = observer(() => (
   <div>
     <Nav />
     <div className="hero">
@@ -12,6 +13,6 @@ const Home = () => (
       </p>
     </div>
   </div>
-)
+));
 
 export default Home
