@@ -1,12 +1,10 @@
 import React from 'react'
 import Router from 'next/router'
-import fetch from 'isomorphic-unfetch'
-import nextCookie from 'next-cookies'
 import LayoutMain from '../components/LayoutMain'
 import { withAuthSync } from '../utils/auth.utils'
+import nextCookie from 'next-cookies'
 import getHost from '../utils/get-host'
 import store from '../store'
-
 
 const Profile = props => {
   const { email, username, } = props.user
@@ -42,36 +40,17 @@ const Profile = props => {
 }
 
 Profile.getInitialProps = async ctx => {
+  // if user doesn't signIn {Profile.getInitialProps} doesn't called
+  // because of redirect in {Wrapper.getInitialProps}
   const { token } = nextCookie(ctx)
-  const apiUrl = 'https://api-dev.fex.net/api/v1/config'
-
-  const redirectOnError = () =>
-    typeof window !== 'undefined'
-      ? Router.push('/login')
-      : ctx.res.writeHead(302, { Location: '/login' }).end()
-
-  try {
-    const response = await fetch(apiUrl, {
-      credentials: 'include',
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
-    })
-
-    if (response.ok) {
-      const config = await response.json()
-      console.log('---> ---> Profile.getInitialProps: isClient', process.browser)
-      console.log('config', config)
-      store.setUser(config.user)
-      return config
-    } else {
-      // https://github.com/developit/unfetch#caveats
-      return await redirectOnError()
-    }
-  } catch (error) {
-    // Implementation or Network error
-    return redirectOnError()
-  }
+  
+  // TODO: Need advice
+  // I can't move this to model because of the ssr
+  // when {Profile.getInitialProps} call ends the rendered components send to client
+  // so if I created a reaction in model on setToken that does getConfig call
+  // then {Profile.getInitialProps} wouldn't know when getConfig fetched
+  const config = await store.getConfig(ctx)
+  return config
 }
 
 export default withAuthSync(Profile)

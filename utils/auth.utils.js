@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import Router from 'next/router'
 import nextCookie from 'next-cookies'
 import cookie from 'js-cookie'
+import store from '../store'
 
 export const login = ({ token }) => {
   cookie.set('token', token, { expires: 1 })
@@ -24,6 +25,9 @@ export const auth = ctx => {
     Router.push('/login')
   }
 
+  // NOTE: so far it's useless
+  // store.setToken(token)
+
   return token
 }
 
@@ -34,76 +38,40 @@ export const logout = () => {
   Router.push('/login')
 }
 
-// Wrapper checks auth and loggs out from all windows
+// Wrapper checks auth and signs out from all windows
 export const withAuthSync = WrappedComponent => {
 
-  // return class Wrapper extends React.Component {
-  //   static getInitialProps = async (ctx) => {
-  //     const token = auth(ctx)
+  class Wrapper extends React.Component {
+    static getInitialProps = async (ctx) => {
+      const token = auth(ctx)
 
-  //     let componentProps = {}
-  //     if (token && WrappedComponent.getInitialProps) {
-  //       componentProps = await WrappedComponent.getInitialProps(ctx)
-  //     }
+      let componentProps = {}
+      if (token && WrappedComponent.getInitialProps) {
+        componentProps = await WrappedComponent.getInitialProps(ctx)
+      }
 
-  //     return { ...componentProps, token }
-  //   }
+      return { ...componentProps, token }
+    }
 
-  //   componentDidMount() {
-  //     if (process.browser) {
-  //       window.addEventListener('storage', this.syncLogout)
-  //     }
-  //   }
+    componentDidMount() {
+      window.addEventListener('storage', this.syncLogout)
+    }
 
-  //   componentWillMount() {
-  //     if (process.browser) {
-  //       window.removeEventListener('storage', this.syncLogout)
-  //       window.localStorage.removeItem('logout')
-  //     }
-  //   }
+    componentWillUnmount() {
+      window.removeEventListener('storage', this.syncLogout)
+      window.localStorage.removeItem('logout')
+    }
 
-  //   syncLogout = event => {
-  //     if (event.key === 'logout') {
-  //       console.log('logged out from storage!')
-  //       Router.push('/login')
-  //     }
-  //   }
-
-  //   render() {
-  //     return <WrappedComponent {...this.props} />
-  //   }
-  // }
-
-  const Wrapper = props => {
-    console.log('---> ---> Wrapper body')
-    const syncLogout = event => {
+    syncLogout = event => {
       if (event.key === 'logout') {
         console.log('logged out from storage!')
         Router.push('/login')
       }
     }
 
-    useEffect(() => {
-      window.addEventListener('storage', syncLogout)
-      return () => {
-        window.removeEventListener('storage', syncLogout)
-        window.localStorage.removeItem('logout')
-      }
-    }, [null])
-
-    return <WrappedComponent {...props} />
-  }
-
-  Wrapper.getInitialProps = async ctx => {
-    console.log('---> ---> Wrapper getInitialProps')
-    const token = auth(ctx)
-
-    let componentProps = {}
-    if (token && WrappedComponent.getInitialProps) {
-      componentProps = await WrappedComponent.getInitialProps(ctx)
+    render() {
+      return <WrappedComponent {...this.props} />
     }
-
-    return { ...componentProps, token }
   }
 
   return Wrapper
