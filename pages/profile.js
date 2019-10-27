@@ -9,7 +9,6 @@ import store from '../store'
 
 const Profile = observer(props => {
   const { email, username } = store.user
-  console.log('---> ---> store.user', store.user)
 
   return (
     <LayoutMain>
@@ -42,10 +41,9 @@ const Profile = observer(props => {
   )
 })
 
-Profile.getInitialProps = async ctx => {
+Profile.getInitialProps = async (ctx) => {
   const { token } = nextCookie(ctx)
-  console.log('---> ---> Profile.getInitialProps')
   return {};
 }
 
-export default withAuthSync(Profile)
+export default Profile

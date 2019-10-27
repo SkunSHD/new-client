@@ -27,7 +27,6 @@ const Store = types
                     ? Router.push('/login')
                     : ctx.res.writeHead(302, { Location: '/login' }).end()
             }
-                
                     
             try {
                 const response = await fetch(apiUrl, {
@@ -53,6 +52,11 @@ const Store = types
                 return redirectOnError()
             }
         },
+    }))
+    .views(self => ({
+        get isAuth() {
+            return Object.keys(self.user).length;
+        }
     }));
 
 export default Store

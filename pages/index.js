@@ -14,4 +14,6 @@ const Home = observer((props) => (
   </LayoutMain>
 ));
 
+Home.authRequired = false;
+
 export default Home

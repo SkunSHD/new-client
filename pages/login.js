@@ -116,4 +116,6 @@ function Login() {
   )
 }
 
+Login.authRequired = false;
+
 export default Login
