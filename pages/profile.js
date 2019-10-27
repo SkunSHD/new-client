@@ -1,4 +1,5 @@
 import React from 'react'
+import { observer } from 'mobx-react'
 import Router from 'next/router'
 import LayoutMain from '../components/LayoutMain'
 import { withAuthSync } from '../utils/auth.utils'
@@ -6,8 +7,10 @@ import nextCookie from 'next-cookies'
 import getHost from '../utils/get-host'
 import store from '../store'
 
-const Profile = props => {
-  const { email, username, } = props.user
+const Profile = observer(props => {
+  const { email, username } = store.user
+  console.log('---> ---> store.user', store.user)
+
   return (
     <LayoutMain>
       <h1>Profile</h1>
@@ -37,20 +40,12 @@ const Profile = props => {
       `}</style>
     </LayoutMain>
   )
-}
+})
 
 Profile.getInitialProps = async ctx => {
-  // if user doesn't signIn {Profile.getInitialProps} doesn't called
-  // because of redirect in {Wrapper.getInitialProps}
   const { token } = nextCookie(ctx)
-  
-  // TODO: Need advice
-  // I can't move this to model because of the ssr
-  // when {Profile.getInitialProps} call ends the rendered components send to client
-  // so if I created a reaction in model on setToken that does getConfig call
-  // then {Profile.getInitialProps} wouldn't know when getConfig fetched
-  const config = await store.getConfig(ctx)
-  return config
+  console.log('---> ---> Profile.getInitialProps')
+  return {};
 }
 
 export default withAuthSync(Profile)

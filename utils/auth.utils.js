@@ -43,10 +43,12 @@ export const withAuthSync = WrappedComponent => {
 
   class Wrapper extends React.Component {
     static getInitialProps = async (ctx) => {
+      console.log('---> ---> Wrapper getInitialProps')
       const token = auth(ctx)
 
       let componentProps = {}
       if (token && WrappedComponent.getInitialProps) {
+        await store.getConfig(ctx)
         componentProps = await WrappedComponent.getInitialProps(ctx)
       }
 
