@@ -1,14 +1,14 @@
 import React from 'react'
-import Nav from '../components/Nav'
+import LayoutMain from '../components/LayoutMain'
+import Nav from '../components/Header'
 import "../scss/styles.scss"
 
 const About = () => (
-	<div>
-		<Nav />
+	<LayoutMain>
 		<div className="hero">
 			<h1 className="title">About page</h1>
 		</div>
-	</div>
+	</LayoutMain>
 )
 
 export default About

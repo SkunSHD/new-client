@@ -16,6 +16,7 @@ import EnvInfoModel from '_core/models/EnvInfo/EnvInfo.model';
 import StatusModel from '_core/models/fs/Status.model';
 import BreadcrumbsModel from '_core/models/breadcrumbs/volatile/Breadcrumbs.volatile';
 import GoogleServicesModel from '_core/models/googleServices/GoogleServices.model';
+import { lookupService } from 'dns';
 
 const RootModel = types.model({
     userToken: UserTokenModel,
