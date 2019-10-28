@@ -46,4 +46,6 @@ Profile.getInitialProps = async (ctx) => {
   return {};
 }
 
+Profile.authRequired = true;
+
 export default Profile
